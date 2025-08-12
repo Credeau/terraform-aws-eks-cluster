@@ -36,7 +36,15 @@ variable "eks_node_groups" {
       min_size       = 1
       instance_types = ["t3a.small"]
       capacity_type  = "ON_DEMAND"
-    }
+    },
+    {
+      name           = "ng-big-compute"
+      desired_size   = 1
+      max_size       = 1
+      min_size       = 1
+      instance_types = ["r6a.xlarge"]
+      capacity_type  = "ON_DEMAND"
+    },
   ]
 }
 
