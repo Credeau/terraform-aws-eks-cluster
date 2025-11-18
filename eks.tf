@@ -15,8 +15,6 @@ resource "aws_eks_cluster" "eks" {
     { Name : local.stack_identifier, ResourceType : "kubernetes" },
     local.common_tags
   )
-
-  depends_on = [aws_iam_role_policy_attachment.eks_cluster_policy]
 }
 
 # Custom Node Groups
@@ -40,9 +38,4 @@ resource "aws_eks_node_group" "custom" {
     { Name : var.node_groups[count.index].name, ResourceType : "kubernetes" },
     local.common_tags
   )
-
-  depends_on = [
-    aws_iam_role_policy_attachment.eks_node_group_defaults,
-    aws_iam_role_policy_attachment.eks_node_custom
-  ]
 }
