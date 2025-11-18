@@ -70,7 +70,7 @@ variable "internal_security_groups" {
 variable "cluster_version" {
   type        = string
   description = "k8s cluster version"
-  default     = "1.29"
+  default     = "1.34"
 }
 
 variable "node_groups" {
