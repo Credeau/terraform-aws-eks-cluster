@@ -7,5 +7,5 @@ locals {
     Org      = var.organization
   }
 
-  stack_identifier = format("%s-%s", var.application, var.environment)
+  stack_identifier = format("%s-%s-eks", var.application, var.environment)
 }

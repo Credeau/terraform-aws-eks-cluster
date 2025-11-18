@@ -67,6 +67,12 @@ variable "internal_security_groups" {
 # Cluster Configuration Variables
 # -----------------------------------------------
 
+variable "cluster_version" {
+  type = string
+  description = "k8s cluster version"
+  default = "1.29"
+}
+
 variable "node_groups" {
   description = "List of node groups"
   type = list(object({

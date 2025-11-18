@@ -1,84 +1,48 @@
 # EKS Cluster
 resource "aws_eks_cluster" "eks" {
-  name     = var.cluster_name
-  version  = "1.29"
+  name     = local.stack_identifier
+  version  = var.cluster_version
   role_arn = aws_iam_role.eks_cluster.arn
 
   vpc_config {
-    subnet_ids              = var.subnet_ids
-    security_group_ids      = [var.cluster_security_group_id]
+    subnet_ids              = var.private_subnet_ids
+    security_group_ids      = var.internal_security_groups
     endpoint_private_access = true
     endpoint_public_access  = true
   }
 
-  tags = {
-    Environment = "dev"
-    project     = "terraform-aws-eks-clusters"
-    Terraform   = "true"
-  }
+  tags = merge(
+    { Name: local.stack_identifier, ResourceType: "kubernetes" },
+    local.common_tags
+  )
 
   depends_on = [aws_iam_role_policy_attachment.eks_cluster_policy]
 }
 
-# Node Group IAM Role
-resource "aws_iam_role" "eks_node_group" {
-  name = "eks-node-group-role"
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Effect = "Allow"
-      Principal = {
-        Service = "ec2.amazonaws.com"
-      }
-      Action = "sts:AssumeRole"
-    }]
-  })
-}
-
-resource "aws_iam_role_policy_attachment" "eks_node_group_defaults" {
-  for_each = toset([
-    "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
-    "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
-    "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
-  ])
-  role       = aws_iam_role.eks_node_group.name
-  policy_arn = each.value
-}
-
-# Managed Node Groups
-resource "aws_eks_node_group" "managed" {
-  count = length(var.eks_node_groups)
+# Custom Node Groups
+resource "aws_eks_node_group" "custom" {
+  count = length(var.node_groups)
 
   cluster_name    = aws_eks_cluster.eks.name
-  node_group_name = var.eks_node_groups[count.index].name
+  node_group_name = var.node_groups[count.index].name
   node_role_arn   = aws_iam_role.eks_node_group.arn
-  subnet_ids      = var.subnet_ids
+  subnet_ids      = var.private_subnet_ids
 
   scaling_config {
-    desired_size = var.eks_node_groups[count.index].desired_size
-    max_size     = var.eks_node_groups[count.index].max_size
-    min_size     = var.eks_node_groups[count.index].min_size
+    desired_size = var.node_groups[count.index].desired_size
+    max_size     = var.node_groups[count.index].max_size
+    min_size     = var.node_groups[count.index].min_size
   }
 
-  capacity_type = var.eks_node_groups[count.index].capacity_type
+  capacity_type = var.node_groups[count.index].capacity_type
 
-  tags = {
-    Environment = "dev"
-    project     = "terraform-aws-eks-clusters"
-    Terraform   = "true"
-  }
+  tags = merge(
+    { Name: var.node_groups[count.index].name, ResourceType: "kubernetes" },
+    local.common_tags
+  )
 
   depends_on = [
     aws_iam_role_policy_attachment.eks_node_group_defaults,
     aws_iam_role_policy_attachment.eks_node_custom
   ]
-}
-
-# kubectl configure
-resource "null_resource" "configure_kubectl" {
-  depends_on = [aws_eks_cluster.eks]
-
-  provisioner "local-exec" {
-    command = "aws eks update-kubeconfig --region ${var.aws_region} --name ${aws_eks_cluster.eks.name}"
-  }
 }
