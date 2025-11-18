@@ -8,11 +8,6 @@ output "cluster_name" {
   value       = aws_eks_cluster.eks.name
 }
 
-output "custom_node_policy_arn" {
-  description = "ARN of the custom node IAM policy"
-  value       = aws_iam_policy.eks_node_custom_policy.arn
-}
-
 output "update_kubeconfig_command" {
   description = "Command to configure kubectl for this EKS cluster"
   value       = "aws eks update-kubeconfig --region ${var.region} --name ${aws_eks_cluster.eks.name}"
