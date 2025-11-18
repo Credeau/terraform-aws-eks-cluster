@@ -1,25 +1,74 @@
-variable "aws_region" {
-  description = "AWS region"
+# -----------------------------------------------
+# Application and Environment Variables
+# -----------------------------------------------
+variable "application" {
+  type        = string
+  description = "application name to refer and mnark across the module"
+  default     = "default"
+}
+
+variable "environment" {
+  type        = string
+  description = "environment type"
+  default     = "dev"
+
+  validation {
+    condition     = contains(["dev", "prod", "uat"], var.environment)
+    error_message = "Environment must be one of: dev, prod, or uat."
+  }
+}
+
+variable "region" {
+  type        = string
+  description = "aws region to use"
   default     = "ap-south-1"
 }
 
-variable "cluster_name" {
-  description = "EKS Cluster Name"
+variable "stack_owner" {
+  type        = string
+  description = "owner of the stack"
+  default     = "tech@credeau.com"
+}
+
+variable "stack_team" {
+  type        = string
+  description = "team of the stack"
+  default     = "devops"
+}
+
+variable "organization" {
+  type        = string
+  description = "organization name"
+  default     = "credeau"
+}
+
+# -----------------------------------------------
+# Networking Variables
+# -----------------------------------------------
+
+variable "vpc_id" {
+  description = "vpc id"
   type        = string
 }
 
-variable "subnet_ids" {
-  description = "Private subnet IDs"
+
+variable "private_subnet_ids" {
   type        = list(string)
+  description = "list of private subnet ids to use"
 }
 
-variable "cluster_security_group_id" {
-  description = "Security group for EKS cluster"
-  type        = string
+variable "internal_security_groups" {
+  type        = list(string)
+  description = "list of internal access security group ids"
+  default     = []
 }
 
-variable "eks_node_groups" {
-  description = "List of EKS node groups"
+# -----------------------------------------------
+# Cluster Configuration Variables
+# -----------------------------------------------
+
+variable "node_groups" {
+  description = "List of node groups"
   type = list(object({
     name           = string
     desired_size   = number
@@ -30,7 +79,7 @@ variable "eks_node_groups" {
   }))
   default = [
     {
-      name           = "ng-1"
+      name           = "ng-regular"
       desired_size   = 1
       max_size       = 1
       min_size       = 1
@@ -38,7 +87,7 @@ variable "eks_node_groups" {
       capacity_type  = "ON_DEMAND"
     },
     {
-      name           = "ng-big-compute"
+      name           = "ng-big-memory"
       desired_size   = 1
       max_size       = 1
       min_size       = 1
@@ -46,9 +95,4 @@ variable "eks_node_groups" {
       capacity_type  = "ON_DEMAND"
     },
   ]
-}
-
-variable "vpc_id" {
-  description = "Existing VPC ID"
-  type        = string
 }
