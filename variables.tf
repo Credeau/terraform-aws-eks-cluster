@@ -68,9 +68,9 @@ variable "internal_security_groups" {
 # -----------------------------------------------
 
 variable "cluster_version" {
-  type = string
+  type        = string
   description = "k8s cluster version"
-  default = "1.29"
+  default     = "1.29"
 }
 
 variable "node_groups" {

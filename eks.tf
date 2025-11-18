@@ -12,7 +12,7 @@ resource "aws_eks_cluster" "eks" {
   }
 
   tags = merge(
-    { Name: local.stack_identifier, ResourceType: "kubernetes" },
+    { Name : local.stack_identifier, ResourceType : "kubernetes" },
     local.common_tags
   )
 
@@ -37,7 +37,7 @@ resource "aws_eks_node_group" "custom" {
   capacity_type = var.node_groups[count.index].capacity_type
 
   tags = merge(
-    { Name: var.node_groups[count.index].name, ResourceType: "kubernetes" },
+    { Name : var.node_groups[count.index].name, ResourceType : "kubernetes" },
     local.common_tags
   )
 

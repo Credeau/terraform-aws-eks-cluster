@@ -3,10 +3,10 @@ resource "aws_iam_role_policy" "eks_node_custom_policy" {
   role = aws_iam_role.main.id
 
   policy = jsonencode({
-    "Version": "2012-10-17",
-    "Statement": [
+    "Version" : "2012-10-17",
+    "Statement" : [
       {
-        "Action": [
+        "Action" : [
           "ecr:BatchGetImage",
           "ecr:DescribeImages",
           "ecr:DescribeRegistry",
@@ -21,11 +21,11 @@ resource "aws_iam_role_policy" "eks_node_custom_policy" {
           "ssm:GetParameters",
           "s3:*"
         ],
-        "Effect": "Allow",
-        "Resource": "*"
+        "Effect" : "Allow",
+        "Resource" : "*"
       },
       {
-        "Action": [
+        "Action" : [
           "cloudwatch:PutMetricData",
           "ec2:DescribeVolumes",
           "ec2:DescribeTags",
@@ -41,31 +41,31 @@ resource "aws_iam_role_policy" "eks_node_custom_policy" {
           "xray:GetSamplingTargets",
           "xray:GetSamplingStatisticSummaries"
         ],
-        "Effect": "Allow",
-        "Resource": "*",
-        "Sid": "CWACloudWatchServerPermissions"
+        "Effect" : "Allow",
+        "Resource" : "*",
+        "Sid" : "CWACloudWatchServerPermissions"
       },
       {
-        "Action": [
+        "Action" : [
           "ssm:GetParameter"
         ],
-        "Effect": "Allow",
-        "Resource": "arn:aws:ssm:*:*:parameter/AmazonCloudWatch-*",
-        "Sid": "CWASSMServerPermissions"
+        "Effect" : "Allow",
+        "Resource" : "arn:aws:ssm:*:*:parameter/AmazonCloudWatch-*",
+        "Sid" : "CWASSMServerPermissions"
       },
       {
-        "Action": [
+        "Action" : [
           "iam:CreateServiceLinkedRole"
         ],
-        "Condition": {
-          "StringEquals": {
-            "iam:AWSServiceName": [
+        "Condition" : {
+          "StringEquals" : {
+            "iam:AWSServiceName" : [
               "replication.ecr.amazonaws.com"
             ]
           }
         },
-        "Effect": "Allow",
-        "Resource": "*"
+        "Effect" : "Allow",
+        "Resource" : "*"
       }
     ]
   })
