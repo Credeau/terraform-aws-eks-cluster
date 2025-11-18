@@ -1,6 +1,27 @@
+# Cluster IAM Role
+resource "aws_iam_role" "eks_cluster" {
+  name = format("%s-role", local.stack_identifier)
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Principal = {
+        Service = "eks.amazonaws.com"
+      }
+      Action = "sts:AssumeRole"
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "eks_cluster_policy" {
+  role       = aws_iam_role.eks_cluster.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+}
+
+# Node group custom policy
 resource "aws_iam_role_policy" "eks_node_custom_policy" {
   name = format("%s-policy", local.stack_identifier)
-  role = aws_iam_role.main.id
+  role = aws_iam_role.eks_node_group.id
 
   policy = jsonencode({
     "Version" : "2012-10-17",
@@ -69,32 +90,6 @@ resource "aws_iam_role_policy" "eks_node_custom_policy" {
       }
     ]
   })
-}
-
-# Cluster IAM Role
-resource "aws_iam_role" "eks_cluster" {
-  name = format("%s-role", local.stack_identifier)
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Effect = "Allow"
-      Principal = {
-        Service = "eks.amazonaws.com"
-      }
-      Action = "sts:AssumeRole"
-    }]
-  })
-}
-
-resource "aws_iam_role_policy_attachment" "eks_cluster_policy" {
-  role       = aws_iam_role.eks_cluster.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
-}
-
-
-resource "aws_iam_role_policy_attachment" "eks_node_custom" {
-  role       = aws_iam_role.eks_node_group.name
-  policy_arn = aws_iam_policy.eks_node_custom_policy.arn
 }
 
 # Node Group IAM Role
