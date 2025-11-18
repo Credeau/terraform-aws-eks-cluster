@@ -12,7 +12,7 @@ module "eks_cluster" {
   private_subnet_ids       = ["subnet-00000000000000000"]
   internal_security_groups = ["sg-00000000000000000"]
 
-  cluster_version = "1.29"
+  cluster_version = "1.34"
   node_groups = [
     {
       name           = "ng-regular"
