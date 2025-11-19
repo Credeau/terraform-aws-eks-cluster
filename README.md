@@ -21,6 +21,8 @@ No modules.
 
 | Name | Type |
 |------|------|
+| [aws_eks_access_entry.sso_user](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_access_entry) | resource |
+| [aws_eks_access_policy_association.sso_user](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_access_policy_association) | resource |
 | [aws_eks_cluster.eks](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_cluster) | resource |
 | [aws_eks_node_group.custom](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_node_group) | resource |
 | [aws_iam_role.eks_cluster](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
@@ -34,6 +36,7 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_application"></a> [application](#input\_application) | application name to refer and mnark across the module | `string` | `"default"` | no |
+| <a name="input_cluster_access_principal_arns"></a> [cluster\_access\_principal\_arns](#input\_cluster\_access\_principal\_arns) | list of pricncipal arns (role or user) to provide cluster access | `list(string)` | `[]` | no |
 | <a name="input_cluster_deletion_protection"></a> [cluster\_deletion\_protection](#input\_cluster\_deletion\_protection) | protect cluster from accidental deletion | `bool` | `true` | no |
 | <a name="input_cluster_version"></a> [cluster\_version](#input\_cluster\_version) | k8s cluster version | `string` | `"1.34"` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | environment type | `string` | `"dev"` | no |
