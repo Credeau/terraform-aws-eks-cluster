@@ -21,6 +21,7 @@ No modules.
 
 | Name | Type |
 |------|------|
+| [aws_eks_addon.ebs_csi_driver](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_addon) | resource |
 | [aws_eks_cluster.eks](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_cluster) | resource |
 | [aws_eks_node_group.custom](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_node_group) | resource |
 | [aws_iam_role.eks_cluster](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
@@ -28,13 +29,18 @@ No modules.
 | [aws_iam_role_policy.eks_node_custom_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_role_policy_attachment.eks_cluster_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_iam_role_policy_attachment.eks_node_group_defaults](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
+| [aws_launch_template.custom](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/launch_template) | resource |
+| [aws_eks_addon_version.ebs_csi](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/eks_addon_version) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_application"></a> [application](#input\_application) | application name to refer and mnark across the module | `string` | `"default"` | no |
-| <a name="input_cluster_version"></a> [cluster\_version](#input\_cluster\_version) | k8s cluster version | `string` | `"1.29"` | no |
+| <a name="input_cluster_version"></a> [cluster\_version](#input\_cluster\_version) | k8s cluster version | `string` | `"1.34"` | no |
+| <a name="input_data_volume_size"></a> [data\_volume\_size](#input\_data\_volume\_size) | size of data volume | `number` | `100` | no |
+| <a name="input_data_volume_type"></a> [data\_volume\_type](#input\_data\_volume\_type) | type of data volume | `string` | `"gp3"` | no |
+| <a name="input_delete_data_volume_on_termination"></a> [delete\_data\_volume\_on\_termination](#input\_delete\_data\_volume\_on\_termination) | delete data volume with node group instance | `bool` | `false` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | environment type | `string` | `"dev"` | no |
 | <a name="input_internal_security_groups"></a> [internal\_security\_groups](#input\_internal\_security\_groups) | list of internal access security group ids | `list(string)` | `[]` | no |
 | <a name="input_node_groups"></a> [node\_groups](#input\_node\_groups) | List of node groups | <pre>list(object({<br>    name           = string<br>    desired_size   = number<br>    max_size       = number<br>    min_size       = number<br>    instance_types = list(string)<br>    capacity_type  = string<br>  }))</pre> | <pre>[<br>  {<br>    "capacity_type": "ON_DEMAND",<br>    "desired_size": 1,<br>    "instance_types": [<br>      "t3a.small"<br>    ],<br>    "max_size": 1,<br>    "min_size": 1,<br>    "name": "ng-regular"<br>  },<br>  {<br>    "capacity_type": "ON_DEMAND",<br>    "desired_size": 1,<br>    "instance_types": [<br>      "r6a.xlarge"<br>    ],<br>    "max_size": 1,<br>    "min_size": 1,<br>    "name": "ng-big-memory"<br>  }<br>]</pre> | no |
