@@ -67,6 +67,12 @@ variable "internal_security_groups" {
 # Cluster Configuration Variables
 # -----------------------------------------------
 
+variable "cluster_deletion_protection" {
+  type        = bool
+  description = "protect cluster from accidental deletion"
+  default     = true
+}
+
 variable "cluster_version" {
   type        = string
   description = "k8s cluster version"

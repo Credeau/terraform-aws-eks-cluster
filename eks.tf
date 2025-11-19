@@ -4,6 +4,8 @@ resource "aws_eks_cluster" "eks" {
   version  = var.cluster_version
   role_arn = aws_iam_role.eks_cluster.arn
 
+  deletion_protection = var.cluster_deletion_protection
+
   vpc_config {
     subnet_ids              = var.private_subnet_ids
     security_group_ids      = var.internal_security_groups
@@ -104,15 +106,19 @@ resource "aws_eks_node_group" "custom" {
 }
 
 data "aws_eks_addon_version" "ebs_csi" {
+  count = 0
+
   addon_name         = "aws-ebs-csi-driver"
   kubernetes_version = aws_eks_cluster.eks.version
   most_recent        = true
 }
 
 resource "aws_eks_addon" "ebs_csi_driver" {
+  count = 0
+
   cluster_name  = aws_eks_cluster.eks.name
   addon_name    = "aws-ebs-csi-driver"
-  addon_version = data.aws_eks_addon_version.ebs_csi.version
+  addon_version = data.aws_eks_addon_version.ebs_csi[0].version
 
   depends_on = [
     aws_eks_node_group.custom
