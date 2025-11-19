@@ -108,21 +108,3 @@ variable "node_groups" {
     },
   ]
 }
-
-variable "data_volume_size" {
-  type        = number
-  description = "size of data volume"
-  default     = 100
-}
-
-variable "data_volume_type" {
-  type        = string
-  description = "type of data volume"
-  default     = "gp3"
-}
-
-variable "delete_data_volume_on_termination" {
-  type        = bool
-  description = "delete data volume with node group instance"
-  default     = false
-}
