@@ -48,17 +48,17 @@ resource "aws_eks_node_group" "custom" {
 }
 
 resource "aws_eks_access_entry" "sso_user" {
-  count = len(var.cluster_access_principal_arns)
+  count = length(var.cluster_access_principal_arns)
 
-  cluster_name  = aws_eks_cluster.your_cluster_name.name
+  cluster_name  = aws_eks_cluster.eks.name
   principal_arn = var.cluster_access_principal_arns[count.index]
   type          = "STANDARD"
 }
 
 resource "aws_eks_access_policy_association" "sso_user" {
-  count = len(var.cluster_access_principal_arns)
+  count = length(var.cluster_access_principal_arns)
 
-  cluster_name  = aws_eks_cluster.your_cluster_name.name
+  cluster_name  = aws_eks_cluster.eks.name
   principal_arn = var.cluster_access_principal_arns[count.index]
   policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
 
