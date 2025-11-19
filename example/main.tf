@@ -31,6 +31,10 @@ module "eks_cluster" {
       capacity_type  = "ON_DEMAND"
     },
   ]
+
+  data_volume_size                  = 50
+  data_volume_type                  = "gp3"
+  delete_data_volume_on_termination = true
 }
 
 output "eks_cluster" {
