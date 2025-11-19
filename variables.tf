@@ -108,3 +108,9 @@ variable "node_groups" {
     },
   ]
 }
+
+variable "cluster_access_principal_arns" {
+  type = list(string)
+  description = "list of pricncipal arns (role or user) to provide cluster access"
+  default = []
+}

@@ -32,6 +32,7 @@ module "eks_cluster" {
       capacity_type  = "ON_DEMAND"
     },
   ]
+  cluster_access_principal_arns = ["arn:aws:iam::account_id:role/aws-reserved/sso.amazonaws.com/ap-south-1/sso_role_name"]
 }
 
 output "eks_cluster" {
