@@ -115,7 +115,7 @@ resource "aws_eks_addon" "ebs_csi_driver" {
   addon_version = data.aws_eks_addon_version.ebs_csi.version
 
   depends_on = [
-    aws_eks_node_group.monitoring
+    aws_eks_node_group.custom
   ]
 
   tags = local.common_tags
