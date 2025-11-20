@@ -80,10 +80,10 @@ data "aws_eks_addon_version" "vpc_cni" {
 
 # VPC CNI Add-on
 resource "aws_eks_addon" "vpc_cni" {
-  cluster_name             = aws_eks_cluster.eks.name
-  addon_name               = "vpc-cni"
-  addon_version            = data.aws_eks_addon_version.vpc_cni.version
-  service_account_role_arn = aws_iam_role.vpc_cni.arn
+  cluster_name                = aws_eks_cluster.eks.name
+  addon_name                  = "vpc-cni"
+  addon_version               = data.aws_eks_addon_version.vpc_cni.version
+  service_account_role_arn    = aws_iam_role.vpc_cni.arn
   resolve_conflicts_on_create = "OVERWRITE"
 
   tags = merge(

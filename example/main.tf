@@ -33,6 +33,8 @@ module "eks_cluster" {
     },
   ]
   cluster_access_principal_arns = ["arn:aws:iam::account_id:role/aws-reserved/sso.amazonaws.com/ap-south-1/sso_role_name"]
+  enable_cluster_autoscaler     = true
+  cluster_autoscaler_version    = "" # Will assign automatically if left empty
 }
 
 output "eks_cluster" {
