@@ -1,5 +1,5 @@
 module "eks_cluster" {
-  source = "git::https://github.com/credeau/terraform-aws-eks-cluster.git?ref=v1.0.0" # path to module in repo root
+  source = "git::https://github.com/credeau/terraform-aws-eks-cluster.git?ref=v1.2.0" # path to module in repo root
 
   application  = "mobile-forge"
   environment  = "prod"
