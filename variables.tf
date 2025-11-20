@@ -114,3 +114,9 @@ variable "cluster_access_principal_arns" {
   description = "list of pricncipal arns (role or user) to provide cluster access"
   default     = []
 }
+
+variable "enable_cloudwatch_application_signals" {
+  type        = bool
+  description = "enable CloudWatch Application Signals for enhanced observability"
+  default     = false
+}
