@@ -122,20 +122,6 @@ resource "aws_eks_addon" "cloudwatch_observability" {
   addon_version            = data.aws_eks_addon_version.cloudwatch_observability.version
   service_account_role_arn = aws_iam_role.cloudwatch_observability.arn
 
-  configuration_values = jsonencode({
-    agent = {
-      config = {
-        logs = {
-          metrics_collected = {
-            application_signals = {
-              enabled = var.enable_cloudwatch_application_signals
-            }
-          }
-        }
-      }
-    }
-  })
-
   tags = merge(
     { Name : "${local.stack_identifier}-cloudwatch-observability", ResourceType : "kubernetes" },
     local.common_tags
