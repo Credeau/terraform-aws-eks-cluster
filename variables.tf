@@ -114,3 +114,15 @@ variable "cluster_access_principal_arns" {
   description = "list of pricncipal arns (role or user) to provide cluster access"
   default     = []
 }
+
+variable "enable_cluster_autoscaler" {
+  type        = bool
+  description = "enable Cluster Autoscaler for automatic node scaling"
+  default     = true
+}
+
+variable "cluster_autoscaler_version" {
+  type        = string
+  description = "version of Cluster Autoscaler (leave empty to auto-derive from cluster version)"
+  default     = ""
+}
