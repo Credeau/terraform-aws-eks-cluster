@@ -199,6 +199,51 @@ resource "aws_iam_role_policy_attachment" "ebs_csi_driver" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
 }
 
+# CloudWatch Observability IAM Role (IRSA)
+data "aws_iam_policy_document" "cloudwatch_observability_assume_role" {
+  statement {
+    effect = "Allow"
+
+    principals {
+      type        = "Federated"
+      identifiers = [aws_iam_openid_connect_provider.eks.arn]
+    }
+
+    actions = ["sts:AssumeRoleWithWebIdentity"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "${replace(aws_iam_openid_connect_provider.eks.url, "https://", "")}:sub"
+      values   = ["system:serviceaccount:amazon-cloudwatch:cloudwatch-agent"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "${replace(aws_iam_openid_connect_provider.eks.url, "https://", "")}:aud"
+      values   = ["sts.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role" "cloudwatch_observability" {
+  name               = format("%s-cloudwatch-observability", local.stack_identifier)
+  assume_role_policy = data.aws_iam_policy_document.cloudwatch_observability_assume_role.json
+
+  tags = merge(
+    { Name : "${local.stack_identifier}-cloudwatch-observability", ResourceType : "kubernetes" },
+    local.common_tags
+  )
+}
+
+resource "aws_iam_role_policy_attachment" "cloudwatch_observability" {
+  for_each = toset([
+    "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy",
+    "arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess"
+  ])
+  role       = aws_iam_role.cloudwatch_observability.name
+  policy_arn = each.value
+}
+
 # OIDC Provider for EKS
 data "tls_certificate" "eks" {
   url = aws_eks_cluster.eks.identity[0].oidc[0].issuer
