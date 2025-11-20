@@ -244,6 +244,47 @@ resource "aws_iam_role_policy_attachment" "cloudwatch_observability" {
   policy_arn = each.value
 }
 
+# EFS CSI Driver IAM Role (IRSA)
+data "aws_iam_policy_document" "efs_csi_driver_assume_role" {
+  statement {
+    effect = "Allow"
+
+    principals {
+      type        = "Federated"
+      identifiers = [aws_iam_openid_connect_provider.eks.arn]
+    }
+
+    actions = ["sts:AssumeRoleWithWebIdentity"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "${replace(aws_iam_openid_connect_provider.eks.url, "https://", "")}:sub"
+      values   = ["system:serviceaccount:kube-system:efs-csi-controller-sa"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "${replace(aws_iam_openid_connect_provider.eks.url, "https://", "")}:aud"
+      values   = ["sts.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role" "efs_csi_driver" {
+  name               = format("%s-efs-csi-driver", local.stack_identifier)
+  assume_role_policy = data.aws_iam_policy_document.efs_csi_driver_assume_role.json
+
+  tags = merge(
+    { Name : "${local.stack_identifier}-efs-csi-driver", ResourceType : "kubernetes" },
+    local.common_tags
+  )
+}
+
+resource "aws_iam_role_policy_attachment" "efs_csi_driver" {
+  role       = aws_iam_role.efs_csi_driver.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEFSCSIDriverPolicy"
+}
+
 # Cluster Autoscaler IAM Role (IRSA)
 data "aws_iam_policy_document" "cluster_autoscaler_assume_role" {
   statement {

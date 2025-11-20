@@ -131,3 +131,23 @@ resource "aws_eks_addon" "cloudwatch_observability" {
     local.common_tags
   )
 }
+
+# Get latest EFS CSI Driver version
+data "aws_eks_addon_version" "efs_csi_driver" {
+  addon_name         = "aws-efs-csi-driver"
+  kubernetes_version = aws_eks_cluster.eks.version
+  most_recent        = true
+}
+
+# EFS CSI Driver Add-on
+resource "aws_eks_addon" "efs_csi_driver" {
+  cluster_name             = aws_eks_cluster.eks.name
+  addon_name               = "aws-efs-csi-driver"
+  addon_version            = data.aws_eks_addon_version.efs_csi_driver.version
+  service_account_role_arn = aws_iam_role.efs_csi_driver.arn
+
+  tags = merge(
+    { Name : "${local.stack_identifier}-efs-csi-driver", ResourceType : "kubernetes" },
+    local.common_tags
+  )
+}
