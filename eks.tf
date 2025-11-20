@@ -107,3 +107,23 @@ resource "aws_eks_addon" "ebs_csi_driver" {
     local.common_tags
   )
 }
+
+# Get latest CloudWatch Observability version
+data "aws_eks_addon_version" "cloudwatch_observability" {
+  addon_name         = "amazon-cloudwatch-observability"
+  kubernetes_version = aws_eks_cluster.eks.version
+  most_recent        = true
+}
+
+# CloudWatch Observability Add-on
+resource "aws_eks_addon" "cloudwatch_observability" {
+  cluster_name             = aws_eks_cluster.eks.name
+  addon_name               = "amazon-cloudwatch-observability"
+  addon_version            = data.aws_eks_addon_version.cloudwatch_observability.version
+  service_account_role_arn = aws_iam_role.cloudwatch_observability.arn
+
+  tags = merge(
+    { Name : "${local.stack_identifier}-cloudwatch-observability", ResourceType : "kubernetes" },
+    local.common_tags
+  )
+}
