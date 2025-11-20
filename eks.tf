@@ -66,3 +66,44 @@ resource "aws_eks_access_policy_association" "sso_user" {
     type = "cluster"
   }
 }
+
+# Get latest VPC CNI version
+data "aws_eks_addon_version" "vpc_cni" {
+  addon_name         = "vpc-cni"
+  kubernetes_version = aws_eks_cluster.eks.version
+  most_recent        = true
+}
+
+# VPC CNI Add-on
+resource "aws_eks_addon" "vpc_cni" {
+  cluster_name             = aws_eks_cluster.eks.name
+  addon_name               = "vpc-cni"
+  addon_version            = data.aws_eks_addon_version.vpc_cni.version
+  service_account_role_arn = aws_iam_role.vpc_cni.arn
+  resolve_conflicts_on_create = "OVERWRITE"
+
+  tags = merge(
+    { Name : "${local.stack_identifier}-vpc-cni", ResourceType : "kubernetes" },
+    local.common_tags
+  )
+}
+
+# Get latest EBS CSI Driver version
+data "aws_eks_addon_version" "ebs_csi_driver" {
+  addon_name         = "aws-ebs-csi-driver"
+  kubernetes_version = aws_eks_cluster.eks.version
+  most_recent        = true
+}
+
+# EBS CSI Driver Add-on
+resource "aws_eks_addon" "ebs_csi_driver" {
+  cluster_name             = aws_eks_cluster.eks.name
+  addon_name               = "aws-ebs-csi-driver"
+  addon_version            = data.aws_eks_addon_version.ebs_csi_driver.version
+  service_account_role_arn = aws_iam_role.ebs_csi_driver.arn
+
+  tags = merge(
+    { Name : "${local.stack_identifier}-ebs-csi-driver", ResourceType : "kubernetes" },
+    local.common_tags
+  )
+}
