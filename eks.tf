@@ -43,6 +43,10 @@ resource "aws_eks_node_group" "custom" {
 
   tags = merge(
     { Name : var.node_groups[count.index].name, ResourceType : "kubernetes" },
+    {
+      "k8s.io/cluster-autoscaler/${local.stack_identifier}" = "owned"
+      "k8s.io/cluster-autoscaler/enabled"                   = "true"
+    },
     local.common_tags
   )
 }
